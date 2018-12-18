@@ -39,7 +39,7 @@ defmodule Service.Resuelve do
       {:request, true, {:ok, resp }} ->
         {:limit_error, resp.body}
       {:request, {:error, %HTTPoison.Error{reason: :timeout} }, true} ->
-        get_users(date_start, date_end, retry_acc + 1 )
+        get_movements(date_start, date_end, retry_acc + 1 )
       {:request, {:error, %HTTPoison.Error{reason: :timeout}} = err , false} ->
         err
       {:decode, err} -> 
