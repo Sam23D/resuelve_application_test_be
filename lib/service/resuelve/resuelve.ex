@@ -12,6 +12,8 @@ defmodule Service.Resuelve do
   @type user :: %User{}
   @type movement :: %Movement{}
 
+  @default_max_retry 2
+
   # TODO Both of this methods share a lot of logic, actually the only diference is the 
   # Helpers.get_url method, once you have to do another methor similar to this, it MUST be refactored
   # into another method, following the Rule of Three.
@@ -23,17 +25,21 @@ defmodule Service.Resuelve do
       {:ok, [ %Movement{} ]}
   """
   @spec get_movements( date, date ) :: {:ok, list( movement )} | {:limit_error, String.t()} | {:error, any()}
-  def get_movements( date_start, date_end )do
+  def get_movements( date_start, date_end, retry_acc \\ 0, max_retry \\ @default_max_retry )do
     with  {:ok, url} <- Helpers.movements_url(date_start, date_end),
-          {:ok, resp = %{ status_code: 200 }} <- HTTPoison.get(url),
+          {:request, {:ok, resp = %{ status_code: 200 }}, true}  <- {:request, HTTPoison.get(url), retry_acc < max_retry},
           {:ok, body } <- Jason.decode(resp.body)
     do
       {:ok, body}
     else 
       {:ok, resp } ->
         {:limit_error, resp.body}
-      err ->
+      {:request, {:error, %HTTPoison.Error{reason: :timeout} }, true} ->
+        get_users(date_start, date_end, retry_acc + 1 )
+      {:request, {:error, %HTTPoison.Error{reason: :timeout}} = err , false} ->
         err
+      err ->
+        {:error, err}
     end
   end
 
@@ -41,16 +47,20 @@ defmodule Service.Resuelve do
     iex> get_users("2017-01-12", "2017-02-01")
       {:ok, [ %User{} ]}
   """
-  @spec get_users( date, date ) :: {:ok, list(user)} | {:limit_error, String.t()} |{:error, any()}
-  def get_users( date_start, date_end )do
+  @spec get_users( date, date ) :: {:ok, list(user)} | {:limit_error, String.t()} | {:error, any()}
+  def get_users( date_start, date_end, retry_acc \\ 0, max_retry \\ @default_max_retry )do
     with  {:ok, url} <- Helpers.users_url(date_start, date_end),
-          {:ok, resp = %{ status_code: 200 }} <- HTTPoison.get(url),
+          {:request, {:ok, resp = %{ status_code: 200 }}, true}  <- {:request, HTTPoison.get(url), retry_acc < max_retry},
           {:ok, body } <- Jason.decode(resp.body)
     do
       {:ok, body}
     else 
       {:ok, resp } ->
         {:limit_error, resp.body}
+      {:request, {:error, %HTTPoison.Error{reason: :timeout} }, true} ->
+        get_users(date_start, date_end, retry_acc + 1 )
+      {:request, {:error, %HTTPoison.Error{reason: :timeout}} = err , false} ->
+        err
       err ->
         {:error, err}
     end

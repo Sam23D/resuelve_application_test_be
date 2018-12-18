@@ -54,7 +54,8 @@ defmodule Repo.Users do
         {:ok, new_ranges } = GeneralHelpers.split_date_range(ds, de)
         new_ranges
         |> IO.inspect
-        |> Enum.map( &_get_users_for_span/1 )
+        |> Enum.map( &( Task.async( fn -> _get_users_for_span(&1) end)))
+        |> Enum.map( fn task -> Task.await(task, 10_000)end )
         |> Enum.reduce( fn 
             {:ok, users }, {:ok, acc} -> {:ok, acc ++ users}
             _, acc -> acc
