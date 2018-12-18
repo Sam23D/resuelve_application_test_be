@@ -31,7 +31,7 @@ defmodule Service.Resuelve do
   @spec get_movements( date, date ) :: {:ok, list( movement )} | {:limit_error, String.t()} | {:error, any()}
   def get_movements( date_start, date_end, retry_acc \\ 0, max_retry \\ @default_max_retry )do
     with  {:ok, url} <- Helpers.movements_url(date_start, date_end),
-          {:request, {:ok, resp = %{ status_code: 200 }}, true}  <- {:request, HTTPoison.get(url), retry_acc < max_retry},
+          {:request, true, {:ok, resp = %{ status_code: 200 }}}  <- {:request, retry_acc < max_retry, HTTPoison.get(url)},
           {:decode, {:ok, body }} <- {:decode, Jason.decode(resp.body)}
     do
       {:ok, body}
