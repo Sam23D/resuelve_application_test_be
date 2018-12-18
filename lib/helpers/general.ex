@@ -3,6 +3,7 @@ defmodule Helpers.General do
   import ResuelveBe.Guards
 
   @type date :: %Date{}
+  @type date_range :: {date, date} 
 
   @doc """
     Accepts 2 dates as either String in YYYY-MM-DD format or as %Date{} Structs,
@@ -56,5 +57,16 @@ defmodule Helpers.General do
         {:ok, [{ ds, middle }, {middle, de}]}
     end
   end
+  @doc """
+    iex> year_date_range 1999
+      {:ok, {~D[1999-01-01], ~D[1999-12-31]}}
+  """
+  @spec year_date_range( integer ) :: {:ok, date_range} | {:error, :invalid_year}
+  def year_date_range( year ) when year > -9999 and year < 9999 do
+    {:ok, ds} =  Date.new(year, 1, 1)
+    {:ok, de} =  Date.new(year, 12, 31)
+    {:ok , {ds, de}}
+  end
 
+  def year_date_range(_), do: {:error, :invalid_year}
 end

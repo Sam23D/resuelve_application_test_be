@@ -36,7 +36,7 @@ defmodule Service.Resuelve do
     do
       {:ok, body}
     else 
-      {:ok, resp } ->
+      {:request, true, {:ok, resp }} ->
         {:limit_error, resp.body}
       {:request, {:error, %HTTPoison.Error{reason: :timeout} }, true} ->
         get_users(date_start, date_end, retry_acc + 1 )
@@ -62,7 +62,7 @@ defmodule Service.Resuelve do
     do
       {:ok, body}
     else 
-      {:ok, resp } ->
+      {:request, true, {:ok, resp }} ->
         {:limit_error, resp.body}
       {:request, true, {:error, %HTTPoison.Error{reason: :timeout} }} ->
         get_users(date_start, date_end, retry_acc + 1 )
