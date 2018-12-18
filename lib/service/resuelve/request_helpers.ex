@@ -5,15 +5,6 @@ defmodule Service.ResuelveRequestHelpers do
 
   @type date :: %Date{}
 
-  def users_url!( date_start, date_end )do
-    case users_url( date_start, date_end ) do
-      {:ok, url} ->
-        url
-      _ ->
-        raise "invalid arguments"
-    end
-  end
-
   @doc """
     Returns Resuelve's users endpoint acording to the given dates
 
@@ -27,7 +18,7 @@ defmodule Service.ResuelveRequestHelpers do
     {:ok,  "#{url}/users/#{Date.to_string(date_start)}/#{Date.to_string(date_end)}"}
   end
 
-  def users_url( date_start, date_end, url ) when is_bitstring( date_start ) and is_bitstring( date_start ) do
+  def users_url( date_start, date_end, url ) when is_bitstring( date_start ) and is_bitstring( date_end ) do
     case { Date.from_iso8601(date_start), Date.from_iso8601(date_end)} do
       {{:ok, parsed_start}, {:ok, parsed_end} }->
         users_url( parsed_start, parsed_end, url)
@@ -51,7 +42,7 @@ defmodule Service.ResuelveRequestHelpers do
     {:ok,  "#{url}/movements/#{Date.to_string(date_start)}/#{Date.to_string(date_end)}"}
   end
 
-  def movements_url( date_start, date_end, url ) when is_bitstring( date_start ) and is_bitstring( date_start ) do
+  def movements_url( date_start, date_end, url ) when is_bitstring( date_start ) and is_bitstring( date_end ) do
     case { Date.from_iso8601(date_start), Date.from_iso8601(date_end)} do
       {{:ok, parsed_start}, {:ok, parsed_end} }->
         movements_url( parsed_start, parsed_end, url)
