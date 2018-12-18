@@ -43,7 +43,7 @@ defmodule Service.Resuelve do
       {:request, {:error, %HTTPoison.Error{reason: :timeout}} = err , false} ->
         err
       {:decode, err} -> 
-        #this is left as is in case we need to do something when we fail to parse the response
+        # this is left as is in case we need to do something when we fail to parse the response
         err
       err ->
         {:error, err}

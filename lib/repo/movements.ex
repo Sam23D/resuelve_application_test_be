@@ -5,8 +5,8 @@ defmodule Repo.Movements do
   import ResuelveBe.Guards
 
   @type date :: %Date{}
-  @type user :: %Resuelve.User{}
   @type movement :: %Resuelve.Movement{}
+  @type date_range :: {date, date}
 
   @doc """
     iex> get_movements("2017-01-12", "2017-02-01")
@@ -15,7 +15,12 @@ defmodule Repo.Movements do
   @spec get_movements( date, date ) :: {:ok, list(movement)} | {:error, String.t()}
   defdelegate get_movements(date_start, date_end), to: Service
 
-  @spec get_movements_for_span(date | String.t(), date | String.t()) :: {:ok, list(user)} | {:error, String.t()}
+  @doc """
+    Will return a list of movements for the two given dates
+    iex> get_movements_for_span("2017-01-01", "2018-01-01")
+      {:ok, [ %Movement{} ]}
+  """
+  @spec get_movements_for_span(date | String.t(), date | String.t()) :: {:ok, list(movement)} | {:error, String.t()}
   def get_movements_for_span( date_start \\ "2017-01-01", date_end \\ "2017-02-01")  when is_string_date_range( date_start, date_end ) do
     with  {:ok, {ds, de}} <- GeneralHelpers.is_valid_date_range( date_start, date_end )
     do
@@ -25,9 +30,11 @@ defmodule Repo.Movements do
 
   def get_movements_for_span( ds = %Date{}, de = %Date{}), do: _get_movements_for_span(ds, de)
 
-  def _get_movements_for_span({ds, de}), do: _get_movements_for_span(ds, de)
+  @spec _get_movements_for_span(date_range) :: {:ok, list(movement)} | {:error, any()}
+  defp _get_movements_for_span({ds, de}), do: _get_movements_for_span(ds, de)
 
-  def _get_movements_for_span( ds, de )do
+  @spec _get_movements_for_span(date, date) :: {:ok, list(movement)} | {:error, any()}
+  defp _get_movements_for_span( ds, de )do
     case get_movements(ds, de)do
       {:ok, movements} ->
         {:ok, movements}

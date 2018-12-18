@@ -7,6 +7,7 @@ defmodule Repo.Users do
   @type date :: %Date{}
   @type user :: %Resuelve.User{}
   @type movement :: %Resuelve.Movement{}
+  @type date_range :: {date, date}
 
   @doc """
     iex> get_users("2017-01-12", "2017-02-01")
@@ -15,6 +16,11 @@ defmodule Repo.Users do
   @spec get_users( date, date ) :: {:ok, list(user)} | {:error, String.t()}
   defdelegate get_users(date_start, date_end), to: Service
 
+  @doc """
+    Will return a list of users for the two given dates
+    iex> get_users_for_span("2017-01-01", "2018-01-01")
+      {:ok, [ %User{} ]}
+  """
   @spec get_users_for_span(date | String.t(), date | String.t()) :: {:ok, list(user)} | {:error, String.t()}
   def get_users_for_span( date_start \\ "2017-01-01", date_end \\ "2017-02-01")  when is_string_date_range( date_start, date_end ) do
     with  {:ok, {ds, de}} <- GeneralHelpers.is_valid_date_range( date_start, date_end )
@@ -25,8 +31,10 @@ defmodule Repo.Users do
   
   def get_users_for_span( ds = %Date{}, de = %Date{}), do: _get_users_for_span(ds, de)
   
+  @spec _get_users_for_span( date_range ) :: {:ok, list(user)} | {:error, any()}
   defp _get_users_for_span({ds, de}), do: _get_users_for_span(ds, de)
 
+  @spec _get_users_for_span(date, date) :: {:ok, list(user)} | {:error, any()}
   defp _get_users_for_span( ds, de )do
     case get_users(ds, de)do
       {:ok, users} ->

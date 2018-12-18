@@ -9,7 +9,7 @@ defmodule Service.ResuelveRequestHelpers do
     Returns Resuelve's users endpoint acording to the given dates
 
     iex> users_url( "1999-12-12", "2000-12-12", "mydomain.com")
-      {:ok, "mydomain.com/1999-12-12/2000-12-12"}
+      {:ok, "mydomain.com/users/1999-12-12/2000-12-12"}
   """
   @spec users_url( String.t() | date, String.t() | date, String.t() ) :: {:ok, String.t()} | {:error, String.t()}
   def users_url(date_start, date_end, url \\ @api_url )
@@ -30,10 +30,10 @@ defmodule Service.ResuelveRequestHelpers do
   def users_url(_, _, date), do: {:error, "invalid date params"}
 
   @doc """
-    Returns Resuelve's users endpoint acording to the given dates
+    Returns Resuelve's movements endpoint acording to the given dates
 
-    iex> users_url( "1999-12-12", "2000-12-12", "mydomain.com")
-      {:ok, "mydomain.com/1999-12-12/2000-12-12"}
+    iex> movements_url( "1999-12-12", "2000-12-12", "mydomain.com")
+      {:ok, "mydomain.com/movements/1999-12-12/2000-12-12"}
   """
   @spec movements_url( String.t() | date, String.t() | date, String.t() ) :: {:ok, String.t()} | {:error, String.t()}
   def movements_url(date_start, date_end, url \\ @api_url )
