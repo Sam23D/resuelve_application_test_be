@@ -20,6 +20,10 @@ defmodule Service.Resuelve do
   # Once that method is refactored ( I propose base_resuelve_get ), it should be moved to Helpers and then
   # implemented here
 
+  # As we intend to do parallel request, and the server overloads when it does not have
+  # cached responses and it recieves a bigg ammount of requests, we set up a simple retry 
+  # fallback
+
   @doc """
     iex> get_movements("2017-01-12", "2017-02-01")
       {:ok, [ %Movement{} ]}
@@ -28,7 +32,7 @@ defmodule Service.Resuelve do
   def get_movements( date_start, date_end, retry_acc \\ 0, max_retry \\ @default_max_retry )do
     with  {:ok, url} <- Helpers.movements_url(date_start, date_end),
           {:request, {:ok, resp = %{ status_code: 200 }}, true}  <- {:request, HTTPoison.get(url), retry_acc < max_retry},
-          {:ok, body } <- Jason.decode(resp.body)
+          {:decode, {:ok, body }} <- {:decode, Jason.decode(resp.body)}
     do
       {:ok, body}
     else 
@@ -37,6 +41,9 @@ defmodule Service.Resuelve do
       {:request, {:error, %HTTPoison.Error{reason: :timeout} }, true} ->
         get_users(date_start, date_end, retry_acc + 1 )
       {:request, {:error, %HTTPoison.Error{reason: :timeout}} = err , false} ->
+        err
+      {:decode, err} -> 
+        #this is left as is in case we need to do something when we fail to parse the response
         err
       err ->
         {:error, err}
@@ -50,16 +57,18 @@ defmodule Service.Resuelve do
   @spec get_users( date, date ) :: {:ok, list(user)} | {:limit_error, String.t()} | {:error, any()}
   def get_users( date_start, date_end, retry_acc \\ 0, max_retry \\ @default_max_retry )do
     with  {:ok, url} <- Helpers.users_url(date_start, date_end),
-          {:request, {:ok, resp = %{ status_code: 200 }}, true}  <- {:request, HTTPoison.get(url), retry_acc < max_retry},
-          {:ok, body } <- Jason.decode(resp.body)
+          {:request, true, {:ok, resp = %{ status_code: 200 }}}  <- {:request, retry_acc < max_retry, HTTPoison.get(url)},
+          {:decode, {:ok, body }} <- {:decode, Jason.decode(resp.body)}
     do
       {:ok, body}
     else 
       {:ok, resp } ->
         {:limit_error, resp.body}
-      {:request, {:error, %HTTPoison.Error{reason: :timeout} }, true} ->
+      {:request, true, {:error, %HTTPoison.Error{reason: :timeout} }} ->
         get_users(date_start, date_end, retry_acc + 1 )
-      {:request, {:error, %HTTPoison.Error{reason: :timeout}} = err , false} ->
+      {:request, false, {:error, %HTTPoison.Error{reason: :timeout}} = err} ->
+        err
+      {:decode, err} ->
         err
       err ->
         {:error, err}

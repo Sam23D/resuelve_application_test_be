@@ -54,6 +54,8 @@ defmodule Repo.Users do
         {:ok, new_ranges } = GeneralHelpers.split_date_range(ds, de)
         new_ranges
         |> IO.inspect
+        # We intend to fetch all the ranges in parallel, this is a quick solution, best aproach
+        # is to use Task.Supervisor, or even Flow
         |> Enum.map( &( Task.async( fn -> _get_users_for_span(&1) end)))
         |> Enum.map( fn task -> Task.await(task, 10_000)end )
         |> Enum.reduce( fn 
