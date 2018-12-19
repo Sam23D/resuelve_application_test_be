@@ -2,13 +2,13 @@ defmodule Repo do
   
   alias Helpers.General, as: GeneralHelpers
   alias Repo.{ Users, Movements}
-  alias Resuelve.{ Movement }
+  alias Resuelve.{ Movement, User }
 
   def get_users_for_year( year )do
     with  {:ok, {ds, de}} <- GeneralHelpers.year_date_range(year),
           {:ok, users} <- Users.get_users_for_span(ds, de)
     do
-      {:ok, users}
+      {:ok, Enum.map(users, &User.parse_record/1 )}
     end
   end
 

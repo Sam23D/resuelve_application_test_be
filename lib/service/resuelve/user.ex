@@ -1,13 +1,24 @@
 defmodule Resuelve.User do
+  
+  alias Helpers.General, as: GeneralHelpers
+  
   @enforce_keys [ :nombre, :apellido, :segundo_nombre, :segundo_apellido, :uid, :email, :active, :created_at]
   defstruct [ :nombre, :apellido, :segundo_nombre, :segundo_apellido, :uid, :email, :active, :created_at]
+  
+  def parse_record( params ), do: GeneralHelpers.to_struct( __MODULE__, params)
 end
 
 defmodule Resuelve.UserMovementSummary do
   defstruct name: "", uid: "", records: 0, resumen: %{ balance: 0, credit: 0, debit: 0 }
 
-  def new_with_initial_movement( movement )do
+  def new_from_initial_movement( movement )do
     add_user_movement_to_summary(movement, %__MODULE__{})
+  end
+
+  def add_user_details(user_summary, user)do
+    %{ user_summary |
+      name: user.nombre 
+    }
   end
 
   def add_user_movement_to_summary( movement, %{ uid: "" } = user_summary )do
