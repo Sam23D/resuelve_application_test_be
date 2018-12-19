@@ -55,7 +55,7 @@ defmodule Repo.Users do
         #   where record.date >= start_date and record.date <= start_date
         # instead of
         #   where record.date >= start_date and record.date < start_date
-        # this is just a suposition
+        # this is just a suposition, i could be terribly Wrong 😅
         # that us the reason for the line 52, it asures there will be no repeated values, 
         # it diminishes performance but it also guarantees that there will
         # be no duplicates, there is room for performance there
