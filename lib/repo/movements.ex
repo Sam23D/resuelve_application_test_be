@@ -38,7 +38,7 @@ defmodule Repo.Movements do
     case get_movements(ds, de)do
       {:ok, movements} ->
         {:ok, movements}
-      {:limit_error, _} ->
+      {:limit_error, _} -> #this is the case when we are returned more than 50 records
         {:ok, new_ranges } = GeneralHelpers.split_date_range(ds, de)
         new_ranges
         |> IO.inspect

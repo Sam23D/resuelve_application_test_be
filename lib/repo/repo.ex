@@ -1,7 +1,7 @@
 defmodule Repo do
   
   alias Helpers.General, as: GeneralHelpers
-  alias Repo.{ Users, Movements}
+  alias Repo.{ Users, Movements }
   alias Resuelve.{ Movement, User }
 
   def get_users_for_year( year )do
