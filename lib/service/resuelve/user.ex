@@ -11,6 +11,9 @@ end
 defmodule Resuelve.UserMovementSummary do
   defstruct name: "", uid: "", records: 0, resumen: %{ balance: 0, credit: 0, debit: 0 }
 
+  @type user_movement_summary :: %__MODULE__{}
+  @type movement :: %Resuelve.Movement{}
+
   def new_from_initial_movement( movement )do
     add_user_movement_to_summary(movement, %__MODULE__{})
   end

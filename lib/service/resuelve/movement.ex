@@ -12,12 +12,34 @@ end
 defmodule Resuelve.MovementSummary do
 
   alias Resuelve.UserMovementSummary, as: UserSummary
+  alias Resuelve.User
 
   defstruct total_credit: 0, total_debit: 0, total_records: 0, balance: 0, by_user: %{}
 
-  def add_user_info_to_summary(summary, user_list)do
+  def add_users_info_to_summary(summary, user_list)do
     user_list
-    |> Enum.reduce( summary, &add_user_info_to_summary/2)
+    |> Enum.reduce( summary, &add_user_info_to_its_summary/2)
+  end
+
+  def has_user_summary?(summary, %{ uid: user_uid})do
+    Map.has_key?( summary.by_user, user_uid )
+  end
+
+  def get_user_summary( summary, %{ uid: user_uid})do
+    Map.get(summary.by_user, user_uid)
+  end
+
+  # THIS SHIT DOES NOT WORK FIX IT
+  def add_user_info_to_its_summary( user = %{ uid: user_uid}, summary )do
+    cond do
+      has_user_summary?( summary, user ) ->
+        %{ summary |
+          by_user: Map.update!( summary.by_user, user_uid, ( fn user_summary -> UserSummary.add_user_details(user_summary, user) end )) 
+        }
+      true ->
+        summary
+    end
+    
   end
 
   def summarize_movements( list )do
@@ -48,10 +70,6 @@ defmodule Resuelve.MovementSummary do
       UserSummary.new_from_initial_movement(movement),
       fn user_summary -> UserSummary.add_user_movement_to_summary( movement, user_summary ) end
        )
-  end
-  # THIS SHIT DOES NOT WORK FIX IT
-  def add_user_info_to_summary( user, %{ by_user: by_user } = summary )do
-    Map.update!( by_user, user.uid, &UserSummary.add_user_details/2 )
   end
 
 end

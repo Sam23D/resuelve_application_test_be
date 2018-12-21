@@ -4,6 +4,17 @@ defmodule Repo.Movements do
 
   import ResuelveBe.Guards
 
+  @moduledoc """
+
+    Extra:  
+    In some places you will find varibles named 
+      date_start, date_end
+    An in other places you will find them again named
+      ds, de
+    We sacrifice a little of redability for keeping shorter lines of code 
+    so they can be a little bit asier to read
+  """
+
   @type date :: %Date{}
   @type movement :: %Resuelve.Movement{}
   @type date_range :: {date, date}
