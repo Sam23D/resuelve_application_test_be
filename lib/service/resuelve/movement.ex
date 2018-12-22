@@ -75,4 +75,13 @@ defmodule Resuelve.MovementSummary do
        )
   end
 
+  def format_summary_report(summary)do
+    %{  totalRecords: summary.total_records,
+        totalCredit: summary.total_credit,
+        totalDebit: summary.total_debit,
+        balance: summary.balance,
+        byUser: Enum.map( summary.by_user, fn {_, val} -> val end )
+    }
+  end
+
 end

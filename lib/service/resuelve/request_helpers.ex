@@ -27,7 +27,7 @@ defmodule Service.ResuelveRequestHelpers do
     end
   end
 
-  def users_url(_, _, date), do: {:error, "invalid date params"}
+  def users_url(_, _, _date), do: {:error, "invalid date params"}
 
   @doc """
     Returns Resuelve's movements endpoint acording to the given dates
@@ -51,6 +51,11 @@ defmodule Service.ResuelveRequestHelpers do
     end
   end
 
-  def movements_url(_, _, date), do: {:error, "invalid date params"}
+  def movements_url(_, _, _date), do: {:error, "invalid date params"}
 
+  @spec resumen_url( String.t() ) :: {:ok, String.t()}
+  def resumen_url( url \\ @api_url)do
+    {:ok, "#{url}/conta/resumen"}
+  end
+  
 end
