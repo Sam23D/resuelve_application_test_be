@@ -6,8 +6,11 @@ defmodule ResuelveBe do
           movements_summary = Resuelve.MovementSummary.summarize_movements(movements),
           final_sumary = Resuelve.MovementSummary.add_users_info_to_summary(movements_summary, users)
     do
-      final_sumary
-      |> Resuelve.MovementSummary.format_summary_report
+      report = Resuelve.MovementSummary.format_summary_report(final_sumary)
+      {:ok, report}
+    else
+      _ ->
+        {:error, "error"}
     end
   end
 

@@ -38,9 +38,11 @@ defmodule Service.Resuelve do
     else 
       {:request, true, {:ok, resp }} ->
         {:limit_error, resp.body}
-      {:request, {:error, %HTTPoison.Error{reason: :timeout} }, true} ->
+      {:request, true, {:error, %HTTPoison.Error{reason: :timeout} }} ->
+        IO.inspect "TIMEOUT RETRY NUM: #{ retry_acc + 1}"
+        Process.sleep( retry_acc * 1000 )
         get_movements(date_start, date_end, retry_acc + 1 )
-      {:request, {:error, %HTTPoison.Error{reason: :timeout}} = err , false} ->
+      {:request, false, {:error, %HTTPoison.Error{reason: :timeout}} = err } ->
         err
       {:decode, err} -> 
         # this is left as is in case we need to do something when we fail to parse the response
@@ -65,6 +67,8 @@ defmodule Service.Resuelve do
       {:request, true, {:ok, resp }} ->
         {:limit_error, resp.body}
       {:request, true, {:error, %HTTPoison.Error{reason: :timeout} }} ->
+        IO.inspect "TIMEOUT RETRY NUM: #{ retry_acc + 1}"
+        Process.sleep( retry_acc * 1000 )
         get_users(date_start, date_end, retry_acc + 1 )
       {:request, false, {:error, %HTTPoison.Error{reason: :timeout}} = err} ->
         err
