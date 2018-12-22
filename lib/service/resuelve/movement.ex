@@ -19,6 +19,7 @@ defmodule Resuelve.MovementSummary do
   @type movement_summary :: %__MODULE__{}
   @type movement :: %Resuelve.Movement{}
   @type user :: %Resuelve.User{}
+  @type user_summary :: %Resuelve.UserMovementSummary{}
 
   defimpl Jason.Encoder, for: __MODULE__ do
     def encode(value, opts)do
@@ -26,15 +27,18 @@ defmodule Resuelve.MovementSummary do
     end
   end
 
+  @spec add_users_info_to_summary(movement_summary, list(user)) :: movement_summary
   def add_users_info_to_summary(summary, user_list)do
     user_list
     |> Enum.reduce( summary, &add_user_info_to_its_summary/2)
   end
 
+  @spec has_user_summary?( movement_summary, user ) :: boolean()
   def has_user_summary?(summary, %{ uid: user_uid})do
     Map.has_key?( summary.by_user, user_uid )
   end
 
+  @spec get_user_summary(movement_summary, user) :: user_summary
   def get_user_summary( summary, %{ uid: user_uid})do
     Map.get(summary.by_user, user_uid)
   end
@@ -75,7 +79,7 @@ defmodule Resuelve.MovementSummary do
     }
   end
 
-  @spec add_movement_by_user_to_summary( movement, map())  :: map()
+  @spec add_movement_by_user_to_summary( movement, map()) :: map()
   def add_movement_by_user_to_summary( movement, by_user )do
     by_user
     |> Map.update( movement.account, 
