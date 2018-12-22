@@ -52,7 +52,6 @@ defmodule Repo.Movements do
       {:limit_error, _} -> #this is the case when we are returned more than 50 records
         {:ok, new_ranges } = GeneralHelpers.split_date_range(ds, de)
         new_ranges
-        |> IO.inspect
         |> Enum.map( &( Task.async( fn -> _get_movements_for_span(&1) end)))
         |> Enum.map( fn task -> Task.await(task, 10_000)end )
         |> Enum.reduce( fn 

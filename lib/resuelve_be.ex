@@ -8,9 +8,6 @@ defmodule ResuelveBe do
     do
       report = Resuelve.MovementSummary.format_summary_report(final_sumary)
       {:ok, report}
-    else
-      _ ->
-        {:error, "error"}
     end
   end
 
