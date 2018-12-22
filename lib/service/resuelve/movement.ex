@@ -16,6 +16,12 @@ defmodule Resuelve.MovementSummary do
 
   defstruct total_credit: 0, total_debit: 0, total_records: 0, balance: 0, by_user: %{}
 
+  defimpl Jason.Encoder, for: __MODULE__ do
+    def encode(value, opts)do
+      Jason.Encode.map(Map.take(value, [:total_credit, :total_debit, :total_records, :balance, :by_user]), opts)
+    end
+  end
+
   def add_users_info_to_summary(summary, user_list)do
     user_list
     |> Enum.reduce( summary, &add_user_info_to_its_summary/2)
@@ -29,17 +35,14 @@ defmodule Resuelve.MovementSummary do
     Map.get(summary.by_user, user_uid)
   end
 
-  # THIS SHIT DOES NOT WORK FIX IT
   def add_user_info_to_its_summary( user = %{ uid: user_uid}, summary )do
-    cond do
-      has_user_summary?( summary, user ) ->
-        %{ summary |
-          by_user: Map.update!( summary.by_user, user_uid, ( fn user_summary -> UserSummary.add_user_details(user_summary, user) end )) 
-        }
-      true ->
-        summary
+    if has_user_summary?( summary, user ) do
+      %{ summary | #add user info if its exits
+        by_user: Map.update!( summary.by_user, user_uid, ( fn user_summary -> UserSummary.add_user_details(user_summary, user) end )) 
+      }
+    else 
+      summary
     end
-    
   end
 
   def summarize_movements( list )do

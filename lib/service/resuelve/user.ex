@@ -14,6 +14,13 @@ defmodule Resuelve.UserMovementSummary do
   @type user_movement_summary :: %__MODULE__{}
   @type movement :: %Resuelve.Movement{}
 
+
+  defimpl Jason.Encoder, for: __MODULE__ do
+    def encode(value, opts)do
+      Jason.Encode.map(Map.take(value, [:name, :uid, :records, :resumen]), opts)
+    end
+  end
+
   def new_from_initial_movement( movement )do
     add_user_movement_to_summary(movement, %__MODULE__{})
   end
