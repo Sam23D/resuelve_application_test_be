@@ -39,7 +39,7 @@ defmodule Service.Resuelve do
       {:request, true, {:ok, resp }} ->
         {:limit_error, resp.body}
       {:request, true, {:error, %HTTPoison.Error{reason: :timeout} }} ->
-        IO.inspect "TIMEOUT RETRY NUM: #{ retry_acc + 1}"
+        IO.inspect "TIMEOUT RETRY"
         Process.sleep( retry_acc * 1000 )
         get_movements(date_start, date_end, retry_acc + 1 )
       {:request, false, {:error, %HTTPoison.Error{reason: :timeout}} = err } ->
@@ -67,7 +67,7 @@ defmodule Service.Resuelve do
       {:request, true, {:ok, resp }} ->
         {:limit_error, resp.body}
       {:request, true, {:error, %HTTPoison.Error{reason: :timeout} }} ->
-        IO.inspect "TIMEOUT RETRY NUM: #{ retry_acc + 1}"
+        IO.inspect "TIMEOUT RETRY NUM"
         Process.sleep( retry_acc * 1000 )
         get_users(date_start, date_end, retry_acc + 1 )
       {:request, false, {:error, %HTTPoison.Error{reason: :timeout}} = err} ->
