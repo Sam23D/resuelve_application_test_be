@@ -32,6 +32,7 @@ defmodule Service.Resuelve do
   def get_movements( date_start, date_end, retry_acc \\ 0, max_retry \\ @default_max_retry )do
     with  {:ok, url} <- Helpers.movements_url(date_start, date_end),
           {:request, true, {:ok, resp = %{ status_code: 200 }}}  <- {:request, retry_acc < max_retry, HTTPoison.get(url)},
+          {:program_stats, :ok} <- {:program_stats, ProgramStats.total_req_inc},
           {:decode, {:ok, body }} <- {:decode, Jason.decode(resp.body)}
     do
       {:ok, body}
@@ -44,6 +45,9 @@ defmodule Service.Resuelve do
         get_movements(date_start, date_end, retry_acc + 1 )
       {:request, false, {:error, %HTTPoison.Error{reason: :timeout}} = err } ->
         err
+      {:program_stats, _} ->
+        IO.inspect "Execution statistics not being recorded correctly"
+        {:error, :program_stats_error}
       {:decode, err} -> 
         # this is left as is in case we need to do something when we fail to parse the response
         err
@@ -72,6 +76,9 @@ defmodule Service.Resuelve do
         get_users(date_start, date_end, retry_acc + 1 )
       {:request, false, {:error, %HTTPoison.Error{reason: :timeout}} = err} ->
         err
+      {:program_stats, _} ->
+        IO.inspect "Execution statistics not being recorded correctly"
+        {:error, :program_stats_error}
       {:decode, err} ->
         err
       err ->

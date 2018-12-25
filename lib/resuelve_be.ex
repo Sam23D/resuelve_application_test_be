@@ -1,6 +1,7 @@
 defmodule ResuelveBe do
 
   def build_report(opts \\ [ users_year: 2017, movements_year: 2018 ]) do
+    ProgramStats.set_start_time
     with  {:get_users, {:ok, users}} = {:get_users, Repo.get_users_for_year ( opts[:users_year] )},
           {:get_movements, {:ok, movements}} = {:get_movements, Repo.get_movements_for_year( opts[:movements_year] )},
           movements_summary = Resuelve.MovementSummary.summarize_movements(movements),
@@ -9,6 +10,8 @@ defmodule ResuelveBe do
       report = Resuelve.MovementSummary.format_summary_report(final_sumary)
       {:ok, report}
     end
+    ProgramStats.set_finish_time
+    ProgramStats.get_stats
   end
 
 end
