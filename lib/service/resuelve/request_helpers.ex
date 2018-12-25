@@ -55,5 +55,10 @@ defmodule Service.ResuelveRequestHelpers do
   def resumen_url( url \\ @api_url)do
     {:ok, "#{url}/conta/resumen"}
   end
+
+  def resumen_url!(url \\ @api_url) do
+    {:ok, url} = resumen_url( url )
+    url
+  end
   
 end
