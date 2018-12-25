@@ -12,7 +12,6 @@ end
 defmodule Resuelve.MovementSummary do
 
   alias Resuelve.UserMovementSummary, as: UserSummary
-  alias Resuelve.User
 
   defstruct total_credit: 0, total_debit: 0, total_records: 0, balance: 0, by_user: %{}
 

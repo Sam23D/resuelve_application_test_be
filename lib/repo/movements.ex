@@ -32,7 +32,8 @@ defmodule Repo.Movements do
       {:ok, [ %Movement{} ]}
   """
   @spec get_movements_for_span(date | String.t(), date | String.t()) :: {:ok, list(movement)} | {:error, String.t()}
-  def get_movements_for_span( date_start \\ "2017-01-01", date_end \\ "2017-02-01")  when is_string_date_range( date_start, date_end ) do
+  def get_movements_for_span(date_start \\ "2017-01-01", date_end \\ "2017-02-01")
+  def get_movements_for_span( date_start, date_end )  when is_string_date_range( date_start, date_end ) do
     with  {:ok, {ds, de}} <- GeneralHelpers.is_valid_date_range( date_start, date_end )
     do
       get_movements_for_span(ds, de)  

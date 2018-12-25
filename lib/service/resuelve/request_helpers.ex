@@ -1,8 +1,6 @@
 defmodule Service.ResuelveRequestHelpers do
   @api_url "https://us-central1-prueba-resuelve.cloudfunctions.net"
 
-  alias Service.Resuelve.BaseResponse
-
   @type date :: %Date{}
 
   @doc """

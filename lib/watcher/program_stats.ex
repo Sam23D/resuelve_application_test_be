@@ -9,6 +9,10 @@ defmodule ProgramStats do
         GenServer.start_link(__MODULE__, %__MODULE__{ start_time: start_time }, name: __MODULE__)
     end
 
+    def init(args) do
+        {:ok, args}
+    end
+
     def get_stats do
         GenServer.call(__MODULE__, :state)
     end

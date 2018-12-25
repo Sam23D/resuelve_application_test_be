@@ -14,15 +14,15 @@ defmodule Service.Resuelve do
 
   @default_max_retry 2
 
-  # TODO Both of this methods share a lot of logic, actually the only diference is the 
+  # TODO Both of this methods share a lot of logic, actually the only diference is preatty much the 
   # Helpers.get_url method, once you have to do another methor similar to this, it MUST be refactored
   # into another method, following the Rule of Three.
   # Once that method is refactored ( I propose base_resuelve_get ), it should be moved to Helpers and then
   # implemented here
 
-  # As we intend to do parallel request, and the server overloads when it does not have
-  # cached responses and it recieves a bigg ammount of requests, we set up a simple retry 
-  # fallback
+  # As we intend to do parallel request, and the server times_out when it does not have
+  # cached responses and we send too many requests, we set up a simple retry mechanism
+  
 
   @doc """
     iex> get_movements("2017-01-12", "2017-02-01")
