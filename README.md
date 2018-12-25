@@ -6,8 +6,10 @@ To install the project make sure you have elixir ~> "1.7" installed, then run.
     mix compile
 ```
 To run the program
+```
+iex -S mix
+```
 ```elixir
-    iex> -S mix
     iex> ResuelveBe.run
 ```
 
