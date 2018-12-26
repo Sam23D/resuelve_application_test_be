@@ -13,4 +13,4 @@ iex -S mix
     iex> ResuelveBe.run
 ```
 
-Output shows final response from the `/conta` response, and as well as total time of execution and total of requests made
+Output shows final response from the `/conta` endpoint, as well as total executio time and total requests made
